@@ -12,6 +12,10 @@ A variant on the `acts_as_localized` theme for when you have static seed data in
 
 ## Example of use
 
+In your `Gemfile`
+
+    gem 'acts_as_read_only_i18n_localised'
+
 In `config/locales/categories.en.yml`
 
     en:
@@ -64,6 +68,19 @@ In `db/seeds.rb` add something like
 
 # Development
 
+This gem requires Ruby version 2.0.0 or better. It is tested against the following Rubies.
+
+* `2.0.0`
+* `2.1.6`
+* `2.2.4`
+* `2.3.0`
+
+Before you do anything do this:
+
+```sh
+bundle install
+```
+
 ## To build the gem
 
     gem build acts_as_read_only_i18n_localised.gemspec
@@ -75,4 +92,17 @@ In `db/seeds.rb` add something like
 or
 
     rake
+
+You can also run the following QA tools against the codebase if you have them installed.
+
+* `rubocop` (on its own without any of the `codeclimate` stuff.)
+* `codeclimate` (which will also run `rubocop` itself.)
+
+## Contributing
+
+Contributions and ideas are welcome.
+
+If you have ideas on how to improve the codebase or feature-set, please add them as issues so they can be discussed.
+
+For contributing code please see [CONTRIBUTING](CONTRIBUTING.md) for details on how to do that.
 
