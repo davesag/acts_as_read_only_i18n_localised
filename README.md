@@ -69,7 +69,7 @@ Say your `categories` have their own sub `categories`.  Building on the previous
       validates_associated :products
   
       has_many :categories, foreign_key: :parent_id
-      belongs_to :parent, class_name: 'Category
+      belongs_to :parent, class_name: 'Category'
 
       acts_as_read_only_i18n_localised :name, :description
       use_custom_slug :slug_maker
