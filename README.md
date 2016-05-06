@@ -68,7 +68,7 @@ Say your `categories` have their own sub `categories`.  Building on the previous
       has_many :products
       validates_associated :products
   
-      has_many :children, class_name: 'Category', foreign_key: :parent_id
+      has_many :categories, foreign_key: :parent_id
       belongs_to :parent, class_name: 'Category
 
       acts_as_read_only_i18n_localised :name, :description
@@ -76,7 +76,7 @@ Say your `categories` have their own sub `categories`.  Building on the previous
   
       def slug_maker
         reurn slug if parent.nil?
-        "#{@parent.slug}.children.#{slug}"
+        "#{@parent.slug}.categories.#{slug}"
       end
     end
 
