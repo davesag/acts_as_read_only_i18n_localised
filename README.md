@@ -1,6 +1,8 @@
-# Acts as Read-Only i18n Localised
+# Acts as Read-Only I18n Localised
 
 A variant on the `acts_as_localized` theme for when you have static seed data in your system that must be localised.
+
+[![Build Status](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised.svg?branch=master)](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised) [![Code Climate](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised/badges/gpa.svg)](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised)
 
 ## Why use it?
 
@@ -29,18 +31,17 @@ In `config/locales/categories.en.yml`
 In `app/models/category.rb`
   
     class Category < ActiveRecord::Base
+      include ActsAsReadOnlyI18nLocalised
       validates :slug, format: {with: /^[a-z]+[\-?[a-z]*]*$/},
                        uniqueness: true,
                        presence: true
       has_many :products
       validates_associated :products
       
-      acts_as_read_only_i18n_localised
-  
-      localise :name, :description
+      acts_as_read_only_i18n_localised :name, :description
     end
 
-The `localise` method simply generates appropriate `name` and `description` methods along the lines of
+This simply generates appropriate `name` and `description` methods along the lines of
 
     def name
       key = "#{self.class.name.pluralize}.#{slug}.name".downcase.to_sym
@@ -60,4 +61,18 @@ In `db/seeds.rb` add something like
     I18n.t(:categories).each do |key, data|
       Category.create(slug: key)
     end
+
+# Development
+
+## To build the gem
+
+    gem build acts_as_read_only_i18n_localised.gemspec
+
+## To test it
+
+    rspec
+
+or
+
+    rake
 
