@@ -56,7 +56,33 @@ with the effect that a call to `category.name` will always return the localised 
 
 Depending on how your code is configured, `I18n` will raise a `MissingTranslationData` exception if the key does correspond to any data. Exceptions on missing keys is usually turned on in `development` and `test` but not on `staging` or `production`. See The [Rails I18n Guide](http://guides.rubyonrails.org/i18n.html) for more.
 
+### A more complex example
+
+Say your `categories` have their own sub `categories`.  Building on the previous example you might define the following
+
+    class Category < ActiveRecord::Base
+      include ActsAsReadOnlyI18nLocalised
+      validates :slug, format: {with: /^[a-z]+[\-?[a-z]*]*$/},
+                       uniqueness: true,
+                       presence: true
+      has_many :products
+      validates_associated :products
+  
+      has_many :children, class_name: 'Category', foreign_key: :parent_id
+      belongs_to :parent, class_name: 'Category
+
+      acts_as_read_only_i18n_localised :name, :description
+      use_custom_slug :slug_maker
+  
+      def slug_maker
+        reurn slug if parent.nil?
+        "#{@parent.slug}.children.#{slug}"
+      end
+    end
+
 ## Seeding your database
+
+### simple case
 
 In `db/seeds.rb` add something like
 
@@ -65,6 +91,23 @@ In `db/seeds.rb` add something like
     I18n.t(:categories).each do |key, data|
       Category.create(slug: key)
     end
+
+### with a hierarchy
+
+In `db/seeds.rb` add something like
+
+    require 'i18n'
+
+    I18n.t(:categories).each do |key, data|
+      cat = Category.where(slug: key).first_or_create!
+      if data[:categories]
+        data[:categories].each do |inner_key, inner_data|
+          Category.where(slug: inner_key, parent: cat).first_or_create!
+        end
+      end
+    end
+
+Or preferably something recursive, though the above will do if you are only going 1 level deep.
 
 # Development
 
