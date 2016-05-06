@@ -2,7 +2,7 @@
 
 A variant on the `acts_as_localized` theme for when you have static seed data in your system that must be localised.
 
-[![Build Status](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised.svg?branch=master)](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised) [![Code Climate](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised/badges/gpa.svg)](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised)
+[![Build Status](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised.svg?branch=master)](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised) [![Code Climate](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised/badges/gpa.svg)](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised) [![Code Climate](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised/badges/gpa.svg)](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised)
 
 ## Why use it?
 
