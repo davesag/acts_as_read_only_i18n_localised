@@ -12,6 +12,10 @@ A variant on the `acts_as_localized` theme for when you have static seed data in
 
 ## Example of use
 
+In your `Gemfile`
+
+    gem 'acts_as_read_only_i18n_localised'
+
 In `config/locales/categories.en.yml`
 
     en:
@@ -52,7 +56,33 @@ with the effect that a call to `category.name` will always return the localised 
 
 Depending on how your code is configured, `I18n` will raise a `MissingTranslationData` exception if the key does correspond to any data. Exceptions on missing keys is usually turned on in `development` and `test` but not on `staging` or `production`. See The [Rails I18n Guide](http://guides.rubyonrails.org/i18n.html) for more.
 
+### A more complex example
+
+Say your `categories` have their own sub `categories`.  Building on the previous example you might define the following
+
+    class Category < ActiveRecord::Base
+      include ActsAsReadOnlyI18nLocalised
+      validates :slug, format: {with: /^[a-z]+[\-?[a-z]*]*$/},
+                       uniqueness: true,
+                       presence: true
+      has_many :products
+      validates_associated :products
+  
+      has_many :children, class_name: 'Category', foreign_key: :parent_id
+      belongs_to :parent, class_name: 'Category
+
+      acts_as_read_only_i18n_localised :name, :description
+      use_custom_slug :slug_maker
+  
+      def slug_maker
+        reurn slug if parent.nil?
+        "#{@parent.slug}.children.#{slug}"
+      end
+    end
+
 ## Seeding your database
+
+### simple case
 
 In `db/seeds.rb` add something like
 
@@ -62,7 +92,37 @@ In `db/seeds.rb` add something like
       Category.create(slug: key)
     end
 
+### with a hierarchy
+
+In `db/seeds.rb` add something like
+
+    require 'i18n'
+
+    I18n.t(:categories).each do |key, data|
+      cat = Category.where(slug: key).first_or_create!
+      if data[:categories]
+        data[:categories].each do |inner_key, inner_data|
+          Category.where(slug: inner_key, parent: cat).first_or_create!
+        end
+      end
+    end
+
+Or preferably something recursive, though the above will do if you are only going 1 level deep.
+
 # Development
+
+This gem requires Ruby version 2.0.0 or better. It is tested against the following Rubies.
+
+* `2.0.0`
+* `2.1.6`
+* `2.2.4`
+* `2.3.0`
+
+Before you do anything do this:
+
+```sh
+bundle install
+```
 
 ## To build the gem
 
@@ -75,4 +135,17 @@ In `db/seeds.rb` add something like
 or
 
     rake
+
+You can also run the following QA tools against the codebase if you have them installed.
+
+* `rubocop` (on its own without any of the `codeclimate` stuff.)
+* `codeclimate` (which will also run `rubocop` itself.)
+
+## Contributing
+
+Contributions and ideas are welcome.
+
+If you have ideas on how to improve the codebase or feature-set, please add them as issues so they can be discussed.
+
+For contributing code please see [CONTRIBUTING](CONTRIBUTING.md) for details on how to do that.
 
