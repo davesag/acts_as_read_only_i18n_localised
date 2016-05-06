@@ -50,3 +50,14 @@ The `localise` method simply generates appropriate `name` and `description` meth
 with the effect that a call to `category.name` will always return the localised name using the standard `I18n` system.
 
 Depending on how your code is configured, `I18n` will raise a `MissingTranslationData` exception if the key does correspond to any data. Exceptions on missing keys is usually turned on in `development` and `test` but not on `staging` or `production`. See The [Rails I18n Guide](http://guides.rubyonrails.org/i18n.html) for more.
+
+## Seeding your database
+
+In `db/seeds.rb` add something like
+
+    require 'i18n'
+
+    I18n.t(:categories).each do |key, data|
+      Category.create(slug: key)
+    end
+
