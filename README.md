@@ -56,7 +56,7 @@ with the effect that a call to `category.name` will always return the localised 
 
 Depending on how your code is configured, `I18n` will raise a `MissingTranslationData` exception if the key does correspond to any data. Exceptions on missing keys is usually turned on in `development` and `test` but not on `staging` or `production`. See The [Rails I18n Guide](http://guides.rubyonrails.org/i18n.html) for more.
 
-*note* This will also work with non-active-record classes.  If there is no `table_name` method it willcheck to see if the `class.name` responds to `pluralize`, and use that if it can, else it will just use the `class.name`.
+*Note*: `acts_as_read_only_i18n_localised` will also work with non `active-record` classes. If there is no `self.table_name` method it will check to see if the `class.name` responds to `pluralize`, and use that if it can, otherwise it will just use the `class.name`.
 
 ### A more complex example
 
