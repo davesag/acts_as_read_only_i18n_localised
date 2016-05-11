@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    acts_as_read_only_i18n_localised (0.0.2)
+    acts_as_read_only_i18n_localised (0.0.3)
       i18n
 
 GEM
@@ -64,4 +64,4 @@ DEPENDENCIES
   rspec
 
 BUNDLED WITH
-   1.11.2
+   1.12.3
