@@ -36,7 +36,7 @@ In `app/models/category.rb`
   
     class Category < ActiveRecord::Base
       include ActsAsReadOnlyI18nLocalised
-      validates :slug, format: {with: /^[a-z]+[\-?[a-z]*]*$/},
+      validates :slug, format: {with: /\A[a-z]+[-?[a-z]]\z/},
                        uniqueness: true,
                        presence: true
       has_many :products
@@ -64,7 +64,7 @@ Say your `categories` have their own sub `categories`.  Building on the previous
 
     class Category < ActiveRecord::Base
       include ActsAsReadOnlyI18nLocalised
-      validates :slug, format: {with: /^[a-z]+[\-?[a-z]*]*$/},
+      validates :slug, format: {with: /\A[a-z]+[-?[a-z]]\z/},
                        uniqueness: true,
                        presence: true
       has_many :products
