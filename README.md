@@ -48,13 +48,15 @@ In `app/models/category.rb`
 This simply generates appropriate `name` and `description` methods along the lines of
 
     def name
-      key = "#{self.class.name.pluralize}.#{slug}.name".downcase.to_sym
+      key = "#{self.table_name}.#{slug}.name".downcase.to_sym
       return I18n.t(key)
     end
 
 with the effect that a call to `category.name` will always return the localised name using the standard `I18n` system.
 
 Depending on how your code is configured, `I18n` will raise a `MissingTranslationData` exception if the key does correspond to any data. Exceptions on missing keys is usually turned on in `development` and `test` but not on `staging` or `production`. See The [Rails I18n Guide](http://guides.rubyonrails.org/i18n.html) for more.
+
+*note* This will also work with non-active-record classes.  If there is no `table_name` method it willcheck to see if the `class.name` responds to `pluralize`, and use that if it can, else it will just use the `class.name`.
 
 ### A more complex example
 
