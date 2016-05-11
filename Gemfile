@@ -4,5 +4,5 @@ gemspec
 
 group :test do
   gem 'rake'
-  gem "codeclimate-test-reporter"
+  gem 'codeclimate-test-reporter'
 end

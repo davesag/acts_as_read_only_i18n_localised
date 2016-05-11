@@ -22,26 +22,39 @@ module ActsAsReadOnlyI18nLocalised
   # Standard Ruby idiom for auto-adding class methods
   #
   module ClassMethods
-
-    def acts_as_read_only_i18n_localised(*attributes)
+    def _inject_standard_slug
       unless methods.include?(:custom_slug)
         define_method :custom_slug do
           send(:slug) if respond_to?(:slug)
         end
       end
+    end
+
+    def _inject_root_name
+      define_method :_root_name do
+        return table_name if respond_to?(:table_name)
+        root_name = self.class.name.gsub(/::/, '/')
+                        .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+                        .gsub(/([a-z\d])([A-Z])/, '\1_\2')
+                        .tr('-', '_')
+        return root_name.pluralize if root_name.respond_to?(:pluralize)
+        root_name
+      end
+    end
+
+    def acts_as_read_only_i18n_localised(*attributes)
+      _inject_standard_slug
+      _inject_root_name
 
       attributes.each do |attribute|
         define_method attribute do
-          I18n.t("#{self.class.name.gsub(/::/, '/')
-                                    .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
-                                    .gsub(/([a-z\d])([A-Z])/, '\1_\2')
-                                    .tr('-', '_')}.#{send(:custom_slug)}.#{attribute}"
-                 .downcase.to_sym)
+          return I18n.t("#{_root_name}.#{send(:custom_slug)}.#{attribute}"
+                        .downcase.to_sym)
         end
       end
     end
 
-    def use_custom_slug custom_slug_method
+    def use_custom_slug(custom_slug_method)
       define_method :custom_slug do
         send(custom_slug_method) if respond_to?(custom_slug_method)
       end
