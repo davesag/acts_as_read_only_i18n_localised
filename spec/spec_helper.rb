@@ -26,7 +26,6 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
-  # allow us to disable verify_partial_doubles on a case by case basis.
   config.around(:each, verify_stubs: false) do |ex|
     config.mock_with :rspec do |mocks|
       mocks.verify_partial_doubles = false

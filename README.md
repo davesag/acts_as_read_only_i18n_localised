@@ -2,7 +2,7 @@
 
 A variant on the `acts_as_localized` theme for when you have static seed data in your system that must be localised.
 
-[![Build Status](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised.svg?branch=master)](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised) [![Code Climate](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised/badges/gpa.svg)](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised)
+[![Build Status](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised.svg?branch=master)](https://travis-ci.org/davesag/acts_as_read_only_i18n_localised) [![Code Climate](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised/badges/gpa.svg)](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised) [![Test Coverage](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised/badges/coverage.svg)](https://codeclimate.com/github/davesag/acts_as_read_only_i18n_localised/coverage)
 
 ## Why use it?
 
@@ -36,7 +36,7 @@ In `app/models/category.rb`
   
     class Category < ActiveRecord::Base
       include ActsAsReadOnlyI18nLocalised
-      validates :slug, format: {with: /^[a-z]+[\-?[a-z]*]*$/},
+      validates :slug, format: {with: /\A[a-z]+[-?[a-z]]\z/},
                        uniqueness: true,
                        presence: true
       has_many :products
@@ -48,7 +48,7 @@ In `app/models/category.rb`
 This simply generates appropriate `name` and `description` methods along the lines of
 
     def name
-      key = "#{self.class.name.pluralize}.#{slug}.name".downcase.to_sym
+      key = "#{self.table_name}.#{slug}.name".downcase.to_sym
       return I18n.t(key)
     end
 
@@ -56,27 +56,29 @@ with the effect that a call to `category.name` will always return the localised 
 
 Depending on how your code is configured, `I18n` will raise a `MissingTranslationData` exception if the key does correspond to any data. Exceptions on missing keys is usually turned on in `development` and `test` but not on `staging` or `production`. See The [Rails I18n Guide](http://guides.rubyonrails.org/i18n.html) for more.
 
+*Note*: `acts_as_read_only_i18n_localised` will also work with non `active-record` classes. If there is no `self.table_name` method it will check to see if the `class.name` responds to `pluralize`, and use that if it can, otherwise it will just use the `class.name`.
+
 ### A more complex example
 
 Say your `categories` have their own sub `categories`.  Building on the previous example you might define the following
 
     class Category < ActiveRecord::Base
       include ActsAsReadOnlyI18nLocalised
-      validates :slug, format: {with: /^[a-z]+[\-?[a-z]*]*$/},
+      validates :slug, format: {with: /\A[a-z]+[-?[a-z]]\z/},
                        uniqueness: true,
                        presence: true
       has_many :products
       validates_associated :products
   
-      has_many :children, class_name: 'Category', foreign_key: :parent_id
-      belongs_to :parent, class_name: 'Category
+      has_many :categories, foreign_key: :parent_id
+      belongs_to :parent, class_name: 'Category'
 
       acts_as_read_only_i18n_localised :name, :description
       use_custom_slug :slug_maker
   
       def slug_maker
         reurn slug if parent.nil?
-        "#{@parent.slug}.children.#{slug}"
+        "#{@parent.slug}.categories.#{slug}"
       end
     end
 
